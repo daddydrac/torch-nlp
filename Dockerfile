@@ -235,4 +235,4 @@ RUN mkdir /opt/app \
 COPY prepare.sh /usr/local/bin/prepare.sh
 RUN chmod +x -R /usr/local/bin
 
-ENTRYPOINT ["tini", "--", "/usr/bin/prepare.sh"]
+ENTRYPOINT ["tini", "--", "/usr/local/bin/prepare.sh"]
