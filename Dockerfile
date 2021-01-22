@@ -13,23 +13,25 @@ ARG miniforge_version="${conda_version}-${miniforge_patch_number}"
 ARG miniforge_installer="${miniforge_python}-${miniforge_version}-Linux-${miniforge_arch}.sh"
 ARG miniforge_checksum="49dddb3998550e40adc904dae55b0a2aeeb0bd9fc4306869cc4a600ec4b8b47c"
 ARG PYTHON_VERSION=default
+ARG PYTHON=python3
+ARG PIP=pip3
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq --fix-missing --no-install-recommends apt-utils \
-        build-essential \
+    build-essential \
 	ca-certificates \
-        curl \
+    curl \
 	fonts-liberation \
 	gfortran \
 	locales \
 	run-one \
-        software-properties-common \
+    software-properties-common \
 	sudo \
 	wget \
-        && \
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*  && \
     apt-get clean && rm -rf /tmp/* /var/tmp/*
@@ -60,6 +62,25 @@ ENV PATH=$CONDA_DIR/bin:$PATH \
     CONDA_VERSION="${conda_version}" \
     MINIFORGE_VERSION="${miniforge_version}"
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
+
+RUN conda install --yes \
+    -c conda-forge \
+    python==3.8 \
+    python-blosc \
+    cytoolz \
+    dask==2021.1.0 \
+    lz4 \
+    nomkl \
+    numpy==1.18.1 \
+    pandas==1.0.1 \
+    tini==0.18.0 \
+    && conda clean -tipsy \
+    && find /opt/conda/ -type f,l -name '*.a' -delete \
+    && find /opt/conda/ -type f,l -name '*.pyc' -delete \
+    && find /opt/conda/ -type f,l -name '*.js.map' -delete \
+    && find /opt/conda/lib/python*/site-packages/bokeh/server/static -type f,l -name '*.js' -not -name '*.min.js' -delete \
+    && rm -rf /opt/conda/pkgs
+
 
 # Copy a script that we will use to correct permissions after running certain commands
 COPY fix-permissions /usr/local/bin/fix-permissions
@@ -159,24 +180,6 @@ USER $NB_UID
 
 WORKDIR $HOME
 
-RUN conda install --yes \
-    -c conda-forge \
-    python==3.8 \
-    python-blosc \
-    cytoolz \
-    dask==2021.1.0 \
-    lz4 \
-    nomkl \
-    numpy==1.18.1 \
-    pandas==1.0.1 \
-    tini==0.18.0 \
-    && conda clean -tipsy \
-    && find /opt/conda/ -type f,l -name '*.a' -delete \
-    && find /opt/conda/ -type f,l -name '*.pyc' -delete \
-    && find /opt/conda/ -type f,l -name '*.js.map' -delete \
-    && find /opt/conda/lib/python*/site-packages/bokeh/server/static -type f,l -name '*.js' -not -name '*.min.js' -delete \
-    && rm -rf /opt/conda/pkgs
-
 
 USER root
 RUN apt-get update \
@@ -211,8 +214,19 @@ RUN conda install --yes \
 
 USER root
 
-# Install what you like here 
-RUN conda install -c pytorch pytorch torchvision torchaudio
+RUN apt-get update && apt-get install -y \
+    ${PYTHON} \
+    ${PYTHON}-pip
+
+RUN ${PIP} --no-cache-dir install --upgrade \
+    pip \
+    setuptools
+
+RUN pip install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+RUN conda install --yes -c conda-forge tensorboard
+RUN conda install --yes captum -c pytorch
+
+EXPOSE 8888 6006
 
 # Create the /opt/app directory, and assert that Jupyter's NB_UID/NB_GID values
 # haven't changed.
