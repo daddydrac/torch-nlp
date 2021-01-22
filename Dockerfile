@@ -233,6 +233,6 @@ RUN mkdir /opt/app \
 # Copy over the example as NB_USER. Unfortuantely we can't use $NB_UID/$NB_GID
 # in the `--chown` statement, so we need to hardcode these values.
 COPY prepare.sh /usr/bin/prepare.sh
-RUN chmod +x /usr/bin/prepare.sh
+RUN chmod +x -R /usr/bin
 ENTRYPOINT ["tini", "--", "/usr/bin/prepare.sh"]
 
