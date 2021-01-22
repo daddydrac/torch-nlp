@@ -218,7 +218,7 @@ RUN ${PIP} --no-cache-dir install --upgrade \
 
 RUN pip install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 RUN conda install --yes -c conda-forge tensorboard
-RUN conda install --yes captum -c pytorch
+RUN pip install captum
 
 EXPOSE 8888 6006
 
@@ -233,6 +233,6 @@ RUN mkdir /opt/app \
 # Copy over the example as NB_USER. Unfortuantely we can't use $NB_UID/$NB_GID
 # in the `--chown` statement, so we need to hardcode these values.
 COPY prepare.sh /usr/bin/prepare.sh
-
+RUN chmod +x /usr/bin/prepare.sh
 ENTRYPOINT ["tini", "--", "/usr/bin/prepare.sh"]
 
