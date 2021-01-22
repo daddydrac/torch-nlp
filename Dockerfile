@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0-runtime-ubuntu18.04
+FROM nvidia/cuda:11.0.3-cudnn8-runtime-ubuntu18.04
 
 USER root
 
@@ -213,7 +213,6 @@ USER root
 
 # Install what you like here 
 RUN conda install -c pytorch pytorch torchvision torchaudio
-RUN conda install dask
 
 # Create the /opt/app directory, and assert that Jupyter's NB_UID/NB_GID values
 # haven't changed.
