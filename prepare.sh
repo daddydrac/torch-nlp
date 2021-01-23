@@ -31,6 +31,5 @@ if [ "$EXTRA_PIP_PACKAGES" ]; then
 fi
 
 start.sh jupyter lab
-
 # Run extra commands
 exec "$@"

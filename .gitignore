@@ -1,4 +1,77 @@
 # Build and Release Folders
+# General
+.pytest_cache
+.DS_Store
+.AppleDouble
+.LSOverride
+__pycache__
+*.pyc
+client_ref/
+_store/
+.cache/
+*.swp
+raw_data
+*.css.map
+
+# Icon must end with two \r
+Icon
+
+# Package files
+*.egg-info
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+.idea
+.vscode
+
+.ipynb_checkpoints
+client/src/node_modules
+client/src/.cache-loader
+
+# HDF5 and faiss files can be too big for git
+*.hdf5
+*.faiss
+*.code-workspace
+
+# Datasets
+data/*/wizard-of-oz.txt
+wizard-of-oz.txt
+data/*/wikipedia*.csv.gz
+*_tst
+server/data/*.zip
+allResponses.json
+*.h5py
+*.pckl
+
+# Dev notebooks
+notebooks/*.ipynb
+
+# Demo
+client/src/demo
+
+# Mypy static checking
+.mypy_cache
+
+# Emacs things
+\#*
+.#*
 bin-debug/
 bin-release/
 [Oo]bj/

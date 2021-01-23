@@ -144,4 +144,5 @@ else
     run-hooks /usr/local/bin/before-notebook.d
     echo "Executing the command: ${cmd[@]}"
     exec "${cmd[@]}"
+    tensorboard --logdir=//opt/app --bind_all
 fi

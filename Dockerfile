@@ -214,13 +214,35 @@ RUN apt-get update && apt-get install -y \
 
 RUN ${PIP} --no-cache-dir install --upgrade \
     pip \
-    setuptools
+    setuptools \
+    hdf5storage \
+    h5py \
+    matplotlib \
+    pyinstrument
 
+# Install what you want here
 RUN pip install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 RUN conda install --yes -c conda-forge tensorboard
 RUN pip install captum
+RUN pip install cupy-cuda110
+RUN conda install -c huggingface transformers
+RUN pip install jupyter-tabnine
+RUN pip install shap
+RUN conda install -c anaconda seaborn
 
-EXPOSE 8888 6006
+#COPY . /opt
+#WORKDIR /opt
+# Build exBERT into its own env
+#RUN conda env update --file environment.yml
+#RUN pip install -e server/transformers
+#RUN pip install -e server/spacyface
+#RUN pip install -e server
+
+# Install English support for spaCy python -m spacy download en_core_web_sm
+#RUN python server/main.py
+
+# Jupyter : Tensorboard : exBERT ports
+EXPOSE 8888 6006 5050
 
 # Create the /opt/app directory, and assert that Jupyter's NB_UID/NB_GID values
 # haven't changed.
@@ -236,3 +258,4 @@ COPY prepare.sh /usr/local/bin/prepare.sh
 RUN chmod +x -R /usr/local/bin
 
 ENTRYPOINT ["tini", "--", "/usr/local/bin/prepare.sh"]
+
